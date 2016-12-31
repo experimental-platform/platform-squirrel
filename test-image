@@ -3,4 +3,4 @@
 set -e
 IMAGE_NAME="$1"
 
-docker run -it --rm $IMAGE_NAME rspec
+docker run -i --rm $IMAGE_NAME rspec
