@@ -1,5 +1,11 @@
 sudo: false
 services:
   - docker
+before_install:
+  - echo "Skip default inferred build steps"
+before:
+  - echo "Skip default inferred build steps"
+before_script:
+  - echo "Skip default inferred build steps"
 script:
   - curl -L https://raw.githubusercontent.com/experimental-platform/build-scripts/master/buildimg.sh | bash
