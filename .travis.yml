@@ -3,6 +3,8 @@ services:
   - docker
 before_install:
   - echo "Skip default inferred build steps"
+install:
+  - echo "Skip default inferred build steps"
 before:
   - echo "Skip default inferred build steps"
 before_script:
