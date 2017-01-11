@@ -19,6 +19,12 @@ module Squirrel
         end
       end
 
+      def histogram(name)
+        if valid_metric_name? name
+          client.get(name.to_sym) || client.histogram(name.to_sym, "Histogram of #{name}")
+        end
+      end
+
       private
 
         def valid_metric_name?(name)
@@ -66,6 +72,17 @@ module Squirrel
       if summary = PrometheusClient.summary(params[:name])
         summary.observe labels, params[:value].to_f
         Squirrel.logger.info "Logged summary #{params[:name]}"
+        "OK"
+      else
+        Squirrel.logger.warn "Invalid metric name #{params[:name]}"
+        halt 404, "Invalid metric name given"
+      end
+    end
+
+    post "/histograms/:name/:value" do
+      if histogram = PrometheusClient.histogram(params[:name])
+        histogram.observe labels, params[:value].to_f
+        Squirrel.logger.info "Logged histogram #{params[:name]}"
         "OK"
       else
         Squirrel.logger.warn "Invalid metric name #{params[:name]}"

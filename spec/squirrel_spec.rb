@@ -27,7 +27,7 @@ describe Squirrel do
     end
 
     describe "POST /summaries/:name/:value" do
-      it "increments the counter for valid metric names" do
+      it "updates the summary for valid metric names" do
         payload = { "labels" => { "method" => "GET", "path" => "/lol/wat" } }
         expect {
           post "/summaries/my_summary/0.123", Oj.dump(payload)
@@ -42,6 +42,27 @@ describe Squirrel do
 
       it "responds with 404 for invalid names" do
         post "/summaries/___/0.123"
+        expect(last_response.status).to be == 404
+        expect(last_response.body).to be == "Invalid metric name given"
+      end
+    end
+
+    describe "POST /histograms/:name/:value" do
+      it "increments the counter for valid metric names" do
+        payload = { "labels" => { "method" => "GET", "path" => "/lol/wat" } }
+        expect {
+          post "/histograms/my_histogram/0.123", Oj.dump(payload)
+        }.to change {
+          Squirrel::PrometheusClient.histogram("my_histogram").values.length
+        }.by(1)
+        expect(last_response.status).to be == 200
+        expect(last_response.body).to be == "OK"
+
+        expect(Squirrel::PrometheusClient.histogram("my_histogram").values.keys).to be == [{method: 'GET', path: '/lol/wat'}]
+      end
+
+      it "responds with 404 for invalid names" do
+        post "/histograms/___/0.123"
         expect(last_response.status).to be == 404
         expect(last_response.body).to be == "Invalid metric name given"
       end
