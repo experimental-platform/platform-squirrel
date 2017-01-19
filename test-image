@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-IMAGE_NAME="$1"
-
-docker run -i --rm $IMAGE_NAME rspec
